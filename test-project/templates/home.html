@@ -1,0 +1,35 @@
+{% extends "base.html" %} 
+
+{% block head_title %}Welcome || {{ block.super }}{% endblock head_title %}
+
+{% block content %}
+
+<h1 class="text-center">Posts</h1><a href="{% url "custom:post-create" %}" class="btn btn-info" role="button">Create Post</a>
+<ul>
+    
+	{% for post in posts  %}
+        <li>
+            <a href="{{ post.get_absolute_url }}"><h2>{{ post }}</h2></a>{{ post.content }}<br><strong>{{ post.timestamp  }}</strong>
+            <br><br>
+            <p>Author: <strong>{{ post.profile }}</strong> </p>
+            <ul>
+            {% if post.comment_set.all %}
+            <strong>Comments</strong>
+            {% for comment in post.comment_set.all %}
+                <li><strong>{{ comment }}</strong> ***Comment left: {{ comment.profile }}***</li>
+            {% endfor %}
+            {% endif %}
+            </ul>
+            
+        </li>
+        <br>
+    {% empty %}	
+        <li>There are no any Posts</li><a href="{% url "custom:post-create" %}">Create Post</a>
+
+    {% endfor %}
+    
+    </ul> 
+
+
+    {% endblock content %}
+            

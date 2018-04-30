@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block head_title %}{{ post }}{% endblock head_title %}
+
+{% block content %}
+    
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.content }}</p>
+    <strong><p>{{ post.timestamp }}</p></strong>
+    <p>Author: <strong>{{ post.profile }}</strong> </p>
+    <ul>
+        {% if post.comment_set.all %}
+        <strong>Comments</strong>
+        {% for comment in post.comment_set.all %}
+            <li><strong>{{ comment }}</strong> ***Comment left: <strong>{{ comment.profile }}</strong>***</li>
+        {% endfor %}
+        {% endif %}
+    </ul>
+    
+    <h2 class="text-center">Add Comment</h2>
+    <form  method="post" action="{% url "custom:comment-create"  post.id %}">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-warning">Add Comment</button> <a href="/" class="btn btn-info" role="button">See All Posts</a> 
+    </form>
+{% endblock content %}
