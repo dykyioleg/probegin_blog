@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+
 class RegisterForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
@@ -34,12 +35,11 @@ class RegisterForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super(RegisterForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
-        #user.password = "asdfasd"
         user.is_active = False
 
         if commit:
             user.save()
-            # user.profile.send_activation_email()
+            user.profile.send_activation_email()
             # create a new user hash for activating email.
         return user
 

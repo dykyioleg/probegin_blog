@@ -2,12 +2,27 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render,redirect
 from django.views.generic import DetailView,CreateView,TemplateView
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from . models import *
 
+
+
+def activate_user_view(request, code=None, *args, **kwargs):
+    if code:
+        qs = Profile.objects.filter(activation_key=code)
+        if qs.exists() and qs.count() == 1:
+            profile = qs.first()
+            if not profile.activated:
+                user_ = profile.user
+                user_.is_active = True
+                user_.save()
+                profile.activated=True
+                profile.activation_key=None
+                profile.save()
+                return redirect("/login")
+    return redirect("/login")
 
 
 
@@ -18,7 +33,7 @@ class RegisterView(CreateView):
 
 	def dispatch(self, *args, **kwargs):
 		if self.request.user.is_authenticated():
-			return redirect ('/logout')
+			return redirect ('/login')
 		return super(RegisterView,self).dispatch(*args, **kwargs)
 
 
